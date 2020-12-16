@@ -5,35 +5,44 @@ using UnityEngine.XR.Interaction.Toolkit;
 
 public class ColorChanger : MonoBehaviour
 {
-
-    public Material greyMaterial = null;
-    public Material blueMaterial = null;
+    public Material PlayMaterial = null;
+    public Material PauseMaterial = null;
 
     private MeshRenderer meshRenderer = null;
     private XRBaseInteractable hoverInteractor = null;
+
+    public bool isPlaying;
 
     private void Awake()
     {
         meshRenderer = GetComponent<MeshRenderer>();
         hoverInteractor = GetComponent<XRBaseInteractable>();
 
-        hoverInteractor.onHoverEntered.AddListener(SetBlue);
-        hoverInteractor.onHoverExited.AddListener(SetGrey);
-    }
+        PlayMaterial = meshRenderer.material;
 
+            hoverInteractor.onHoverEntered.AddListener(ChangeMaterial);
+    }
+    
     private void OnDestroy()
     {
-        hoverInteractor.onHoverEntered.RemoveListener(SetBlue);
-        hoverInteractor.onHoverExited.RemoveListener(SetGrey);
+            hoverInteractor.onHoverEntered.RemoveListener(ChangeMaterial);
     }
-
-    private void SetGrey(XRBaseInteractor interactor)
+    
+    private void ChangeMaterial(XRBaseInteractor interactor)
     {
-        meshRenderer.material = greyMaterial;
-    }
+        if (!isPlaying)
+        {
+            meshRenderer.material = PlayMaterial;
+            isPlaying = true;
 
-    private void SetBlue(XRBaseInteractor interactor)
-    {
-        meshRenderer.material = blueMaterial;
+        } else
+        {
+            meshRenderer.material = PauseMaterial;
+            isPlaying = false;
+            FindObjectOfType<AudioManager>().Play("Ukulele");
+
+        }
+
+
     }
 }
