@@ -39,7 +39,7 @@ public class ColorChanger : MonoBehaviour
         {
             meshRenderer.material = PauseMaterial;
             isPlaying = false;
-            FindObjectOfType<AudioManager>().Play("Ukulele");
+            //FindObjectOfType<AudioManager>().Play("Ukulele");
 
         }
 
