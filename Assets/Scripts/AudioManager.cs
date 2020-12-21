@@ -6,10 +6,11 @@ using System;
 [RequireComponent(typeof(AudioSource))]
 public class AudioManager : MonoBehaviour
 {
-
+    public AudioClip click;
     public AudioClip[] musicClips;
     private int currentTrack;
     private AudioSource source;
+    bool isPlaying;
     void Start()
     {
         source = GetComponent<AudioSource>();
@@ -17,29 +18,29 @@ public class AudioManager : MonoBehaviour
 
     public void Update()
     {
-        void OnCollisionEnter(Collision collision)
-            {
-                if (collision.collider.tag == "finger")
-                {
-                    PlayMusic();
-                }
-            }
     }
 
-
-    public void PlayMusic()
+    public void PlayPause()
     {
-        if (!source.isPlaying)
+        source.PlayOneShot(click, 0.7F);
+
+        if (!isPlaying)
         {
+            isPlaying = true;
             source.Play();
-            
+            return;
+        }
+        if (isPlaying)
+        {
+            isPlaying = false;
+            source.Pause();
+            return;
         }
         currentTrack--;
         if (currentTrack < 0)
         {
             currentTrack = musicClips.Length - 1;
         }
-        StartCoroutine(WaitForMusicEnd());
     }
 
     IEnumerator WaitForMusicEnd()
@@ -53,67 +54,44 @@ public class AudioManager : MonoBehaviour
         NextTitle();
 
     }
-        public void NextTitle()
+    public void NextTitle()
+    {       
+        source.Stop();
+        source.PlayOneShot(click, 0.7F);
+        currentTrack++;
+        if (currentTrack > musicClips.Length - 1)
         {
-            source.Stop();
-            currentTrack++;
-            if (currentTrack > musicClips.Length - 1)
-            {
-                currentTrack = 0;
-            }
-            source.clip = musicClips[currentTrack];
-            source.Play();
-            //show title
-
-            StartCoroutine(WaitForMusicEnd());
-
+            currentTrack = 0;
         }
-
-        public void PreviousTitle()
-        {
-            source.Stop();
-            currentTrack--;
-            if (currentTrack < 0)
-
-            {
-
-                currentTrack = musicClips.Length - 1;
-            }
-            source.clip = musicClips[currentTrack];
-            source.Play();
-
-
-            //Title
-
-            StartCorounine(WaitForMusicEnd());
-            Debug.Log("PreviousSong");
-
-        }
-
-    private void StartCorounine(IEnumerator enumerator)
-    {
-        throw new NotImplementedException();
+        source.clip = musicClips[currentTrack];
+        source.Play();
     }
 
-    public void StopMusic()
+    public void PreviousTitle()
+    {
+        source.Stop();
+        source.PlayOneShot(click, 0.7F);
+        currentTrack--;
+        if (currentTrack < 0)
 
         {
-            StopCoroutine("WaitForMusicEnd");
-            source.Stop();
-            Debug.Log("Stop");
 
+            currentTrack = musicClips.Length - 1;
         }
+        source.clip = musicClips[currentTrack];
+        source.Play();
 
-    private new void StopCoroutine(string v)
-    {
-        throw new NotImplementedException();
     }
 
-    public void MuteMusic()
-        {
-            source.mute = !source.mute;
-            Debug.Log("Mute");
-        }
+    public void volumeUp()
+    {
+        source.PlayOneShot(click, 0.7F);
+        source.volume++;
+    }
+    public void volumeDown()
+    {
+        source.PlayOneShot(click, 0.7F);
+        source.volume--;
+    }
 
-    
 }

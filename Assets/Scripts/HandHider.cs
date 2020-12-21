@@ -29,6 +29,5 @@ public class HandHider : MonoBehaviour
     private void Hide(XRBaseInteractable interactable)
     {
         meshRenderer.enabled = false;
-        Debug.Log("working");
     }
 }
